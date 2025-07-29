@@ -6,6 +6,8 @@
     "@tailwindcss/cli": "^4.1.11",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "fs": "^0.0.1-security",
+    "mongodb": "^6.18.0",
     "tailwindcss": "^4.1.11"
   }
 }
