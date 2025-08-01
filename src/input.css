@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+body {
+    @apply bg-gray-50 text-gray-800;
+}
+
+.container {
+    @apply px-8 md:px-24 lg:px-36 mx-auto;
+}
+
+.btn {
+    @apply px-2 py-1 rounded-md transition cursor-pointer font-medium;
+}
+.btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-700;
+}
+.btn-edit {
+    @apply bg-yellow-500 text-white hover:bg-yellow-600;
+}
+.btn-delete {
+    @apply bg-red-500 text-white hover:bg-red-600;
+}
+
+label {
+    @apply font-medium block mb-1;
+}
+input, select {
+    @apply block text-sm px-2.5 py-1.5 border rounded w-full bg-white focus:outline-none;
+}
+
+h1 {
+    @apply text-2xl font-semibold;
+}
+
+.dog {
+    @apply shadow rounded-xl bg-white px-8 pt-8 pb-4;
+}
+.dog h2 {
+    @apply font-semibold text-xl capitalize;
+}
+.dog .subbreed {
+    @apply bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full capitalize w-max inline-block mt-2;
+}
+.dog p {
+    @apply text-sm text-gray-500 italic mt-2;
+}
+
+.popup-form {
+    @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[95%] md:w-2/3 lg:w-1/2 xl:w-1/4 bg-white p-4 lg:p-12 z-20;
+}

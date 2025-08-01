@@ -21,10 +21,7 @@ async function connectToDatabase() {
 	return client.db("dogs");
 }
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
-});
+module.exports = app;
 
 app.get("/", async (req, res) => {
     try {

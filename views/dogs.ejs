@@ -6,17 +6,131 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="/dist/style.css">
     <link rel="icon" href="/dist/icon.png" type="image/png">
-    <script src="/dist/forms.js"></script>
     <title>Dogs Web API</title>
 </head>
 
 <body>
 
+<div class="container py-8">
+    <div class="flex items-center">
+        <h1>Dogs</h1>
+        <button class="btn btn-primary text-sm popup-btn ml-auto" data-form="add_form">Add Breed +</button>
+    </div>
+    <div class="grid lg:grid-cols-2 items-center mt-4">
+        <input id="search" type="text" placeholder="Search breeds..." class="">
+        <select id="sortSelect" class="lg:!w-max lg:ml-auto mt-4 lg:mt-0">
+            <option value="asc">Breed Ascending</option>
+            <option value="desc">Breed Descending</option>
+        </select>
+    </div>
+    <div class="dogs grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
+        <% dogs.forEach(dog => { %>
+            <div class="dog" data-breed="<%= dog.breed %>">
+                <h2><%= dog.breed %></h2>
+                <% if (dog.subBreeds.length > 0){ %>
+                <% dog.subBreeds.forEach(subBreed => { %>
+                        <div class="subbreed"><%= subBreed %></div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No sub-breeds</p>
+                <% } %>
+                <div class="flex items-center mt-4 gap-x-2">
+                    <button class="btn btn-edit text-sm popup-btn ml-auto" data-form="edit_form_<%= dog._id %>">Edit</button>
+                    <form method="post" action="/dogs/<%= dog._id %>/delete" onsubmit="return confirm('Are you sure you want to delete <%= dog.breed %>?')">
+                        <button class="btn btn-delete text-sm">Delete</button>
+                    </form>
+                </div>
 
+                <div id="edit_form_<%= dog._id %>" class="popup-form hidden">
+                    <div class="absolute top-4 right-6 cursor-pointer" onclick="hidePopup()">🗙</div>
+                    <form method="post" action="/dogs/<%= dog._id %>/edit">
+                        <h4 class="text-center text-lg font-semibold">Edit Breed</h4>
+                        <label>Breed</label>
+                        <input type="text" name="breed" value="<%= dog.breed %>">
+
+                        <label class="mt-2">Sub-breeds (Separated by a comma)</label>
+                        <input type="text" name="subBreeds" value="<%= dog.subBreeds.join(', ') %>">
+                        <button type="submit" class="btn btn-primary mt-4 w-full">Update</button>
+                    </form>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+<div id="add_form" class="popup-form hidden">
+    <div class="absolute top-4 right-6 cursor-pointer" onclick="hidePopup()">🗙</div>
+    <form method="post" action="/dogs">
+        <h4 class="text-center text-lg font-semibold">Add a New Breed</h4>
+        <label>Breed</label>
+        <input type="text" name="breed">
+
+        <label class="mt-2">Sub-breeds (Separated by a comma)</label>
+        <input type="text" name="subBreeds">
+        <button type="submit" class="btn btn-primary mt-4 w-full">Add Breed</button>
+    </form>
+</div>
+
+<div id="dark_bg" class="bg-black opacity-50 w-screen h-screen fixed top-0 left-0 z-10 hidden"></div>
 
 </body>
 
 <footer>
+    <script>
+        function showPopup(form_id){
+            const form = document.getElementById(form_id);
+            const bg = document.getElementById("dark_bg");
+            form.classList.remove('hidden');
+            bg.classList.remove('hidden');
+        }
 
+        function hidePopup(){
+            document.querySelectorAll('.popup-form').forEach(form => {
+                form.classList.add('hidden');
+            })
+            document.getElementById('dark_bg').classList.add('hidden');
+        }
+
+        function filterAndSort() {
+            const filterText = searchInput.value.trim();
+            const direction = sortSelect.value;
+
+            const filtered = cards.filter(card => {
+                const breed = card.dataset.breed;
+                if (breed && breed.includes(filterText)) return true;
+                return Array.from(card.querySelectorAll('.subbreed')).some(
+                    el => el.textContent.includes(filterText)
+                );
+            });
+
+            filtered.sort((a, b) => {
+                const aName = a.dataset.breed;
+                const bName = b.dataset.breed;
+                if (aName < bName) return direction === 'asc' ? -1:1;
+                if (aName > bName) return direction === 'asc' ? 1:-1;
+                return 0;
+            });
+
+            grid.innerHTML = '';
+            filtered.forEach(card => grid.appendChild(card));
+        }
+
+        document.querySelectorAll('.popup-btn').forEach(popup_btn => {
+            popup_btn.addEventListener("click", function() {
+                const form_id = popup_btn.getAttribute('data-form');
+                showPopup(form_id);
+            });
+        });
+
+        const searchInput = document.getElementById('search');
+        const sortSelect = document.getElementById('sortSelect');
+        const grid = document.querySelector('.dogs');
+        const cards = Array.from(grid.children);
+        
+        filterAndSort();
+
+        searchInput.addEventListener('input', filterAndSort);
+        sortSelect.addEventListener('change', filterAndSort);
+    </script>
 </footer>
 </html>
