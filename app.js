@@ -1,8 +1,10 @@
 const express = require('express');
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
+app.set('views', path.join(__dirname, 'views'));
 app.set("view engine", "ejs");
 
 app.use("/dist", express.static(__dirname + "/dist"));
@@ -20,8 +22,6 @@ async function connectToDatabase() {
 	}
 	return client.db("dogs");
 }
-
-module.exports = app;
 
 app.get("/", async (req, res) => {
     try {
@@ -59,3 +59,10 @@ app.post("/dogs/:id/delete", async (req, res) => {
     await db.collection("dogs").deleteOne({ _id: new ObjectId(id) });
     res.redirect("/");
 });
+
+app.use((err, req, res, next) => {
+    console.error('Uncaught error:', err.stack);
+    res.status(500).json({ error: err.message });
+});
+
+module.exports = app;
